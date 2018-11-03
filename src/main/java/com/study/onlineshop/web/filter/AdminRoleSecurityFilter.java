@@ -11,14 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.EnumSet;
 
-public class UserRoleSecurityFilter implements Filter {
+public class AdminRoleSecurityFilter implements Filter {
     private SecurityService securityService;
 
-    public UserRoleSecurityFilter(SecurityService securityService) {
+    public AdminRoleSecurityFilter(SecurityService securityService) {
         this.securityService = securityService;
     }
 
-    // chain of responsibility
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
@@ -31,7 +30,7 @@ public class UserRoleSecurityFilter implements Filter {
         if (token != null) {
             Session session = securityService.getSession(token);
             if (session != null) {
-                isAuth = securityService.checkTokenPermissions(token, EnumSet.of(UserRole.USER, UserRole.ADMIN));
+                isAuth = securityService.checkTokenPermissions(token, EnumSet.of(UserRole.ADMIN));
             }
         }
 

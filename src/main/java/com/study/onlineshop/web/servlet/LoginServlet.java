@@ -11,39 +11,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 
 public class LoginServlet extends HttpServlet {
-    private List<String> activeTokens;
     private SecurityService securityService;
 
-    public LoginServlet(List<String> activeTokens) {
-        this.activeTokens = activeTokens;
+    public LoginServlet(SecurityService securityService) {
+        this.securityService = securityService;
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PageGenerator pageGenerator = PageGenerator.instance();
         HashMap<String, Object> parameters = new HashMap<>();
 
         String page = pageGenerator.getPage("login", parameters);
-        resp.getWriter().write(page);
+        response.getWriter().write(page);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String login = req.getParameter("login");
-        String password = req.getParameter("password");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String login = request.getParameter("login");
+        String password = request.getParameter("password");
         System.out.println(login + " : " + password);
 
         Session session = securityService.login(login, password);
         if (session != null) {
             Cookie cookie = new Cookie("user-token", session.getToken());
             cookie.setMaxAge(60 * 60 * 5);
-            resp.addCookie(cookie);
-            resp.sendRedirect("/");
+            response.addCookie(cookie);
+            response.sendRedirect("/");
         } else {
-            resp.sendRedirect("/login");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 }

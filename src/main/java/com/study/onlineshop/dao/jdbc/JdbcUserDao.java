@@ -1,36 +1,37 @@
 package com.study.onlineshop.dao.jdbc;
 
-import com.study.onlineshop.dao.ProductDao;
-import com.study.onlineshop.dao.jdbc.mapper.ProductRowMapper;
-import com.study.onlineshop.entity.Product;
+import com.study.onlineshop.dao.UserDao;
+import com.study.onlineshop.dao.jdbc.mapper.UserRowMapper;
+import com.study.onlineshop.entity.User;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JdbcProductDao implements ProductDao {
+public class JdbcUserDao implements UserDao {
 
-    private static final String GET_ALL_SQL = "SELECT id, name, creation_date, price FROM products";
-    private static final String ADD_SQL = "INSERT INTO products(name, price, creation_date) VALUES (?, ?, ?);";
-    private static final String DELETE_SQL = "DELETE FROM products WHERE id = ?;";
-    private static final String UPDATE_SQL = "UPDATE products SET name = ?, price = ? WHERE id = ?;";
-    private static final ProductRowMapper PRODUCT_ROW_MAPPER = new ProductRowMapper();
+    private static final String GET_ALL_SQL = "SELECT id, login, user_role, encrypted_password, sole FROM users";
+    private static final String ADD_SQL = "INSERT INTO users(login, user_role, encrypted_password, sole) VALUES (?, ?, ?, ?);";
+    private static final String DELETE_SQL = "DELETE FROM users WHERE login = ?;";
+    private static final String UPDATE_SQL = "UPDATE users SET user_role = ?, encrypted_password = ?, sole = ? WHERE login = ?;";
+    private static final UserRowMapper USER_ROW_MAPPER = new UserRowMapper();
 
     private ConnectionProvider connectionProvider;
 
     @Override
-    public List<Product> getAll() {
+    public List<User> getAll() {
         try (Connection connection = connectionProvider.getConnection();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(GET_ALL_SQL)) {
 
-            List<Product> products = new ArrayList<>();
+
+            List<User> users = new ArrayList<>();
             while (resultSet.next()) {
-                Product product = PRODUCT_ROW_MAPPER.mapRow(resultSet);
-                products.add(product);
+                User user = USER_ROW_MAPPER.mapRow(resultSet);
+                users.add(user);
             }
 
-            return products;
+            return users;
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -38,14 +39,14 @@ public class JdbcProductDao implements ProductDao {
     }
 
     @Override
-    public Product getById(int id) {
-        String sql = GET_ALL_SQL + " WHERE id = ?";
+    public User getUser(String login) {
+        String sql = GET_ALL_SQL + " WHERE login = ?;";
         try (Connection connection = connectionProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)){
-            statement.setInt(1, id);
+            statement.setString(1, login);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()){
-                return PRODUCT_ROW_MAPPER.mapRow(resultSet);
+                return USER_ROW_MAPPER.mapRow(resultSet);
             }
             return null;
         } catch (SQLException e) {
@@ -55,12 +56,13 @@ public class JdbcProductDao implements ProductDao {
     }
 
     @Override
-    public int add(Product product) {
+    public int add(User user) {
         try (Connection connection = connectionProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(ADD_SQL)){
-            statement.setString(1, product.getName());
-            statement.setDouble(2, product.getPrice());
-            statement.setTimestamp(3, Timestamp.valueOf(product.getCreationDate()));
+            statement.setString(1, user.getLogin());
+            statement.setString(2, user.getUserRole().toString());
+            statement.setString(3, user.getEncryptedPassword());
+            statement.setString(4, user.getSole());
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
             int id = 0;
@@ -75,10 +77,10 @@ public class JdbcProductDao implements ProductDao {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(String login) {
         try (Connection connection = connectionProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(DELETE_SQL)){
-            statement.setInt(1, id);
+            statement.setString(1, login);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -87,12 +89,13 @@ public class JdbcProductDao implements ProductDao {
     }
 
     @Override
-    public void update(Product product) {
+    public void update(User user) {
         try (Connection connection = connectionProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE_SQL)){
-            statement.setString(1, product.getName());
-            statement.setDouble(2, product.getPrice());
-            statement.setInt(3, product.getId());
+            statement.setString(1, user.getUserRole().toString());
+            statement.setString(2, user.getEncryptedPassword());
+            statement.setString(3, user.getSole());
+            statement.setString(4, user.getLogin());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -103,4 +106,5 @@ public class JdbcProductDao implements ProductDao {
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
+
 }
