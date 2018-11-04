@@ -1,8 +1,11 @@
 package com.study.onlineshop.web.servlet;
 
+import com.study.onlineshop.entity.Cart;
 import com.study.onlineshop.entity.Product;
 import com.study.onlineshop.entity.UserRole;
 import com.study.onlineshop.security.SecurityService;
+import com.study.onlineshop.security.Session;
+import com.study.onlineshop.service.CartService;
 import com.study.onlineshop.service.ProductService;
 import com.study.onlineshop.web.templater.PageGenerator;
 
@@ -23,13 +26,23 @@ public class ProductsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        PageGenerator pageGenerator = PageGenerator.instance();
-        List<Product> products = productService.getAll();
-
-        HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("products", products);
         String token = securityService.getValidatedToken(request.getCookies());
+        int cartCount = 0;
         if(token != null) {
+            PageGenerator pageGenerator = PageGenerator.instance();
+            List<Product> products = productService.getAll();
+
+            HashMap<String, Object> parameters = new HashMap<>();
+            parameters.put("products", products);
+            Session session = securityService.getSession(token);
+            if(session != null){
+                Cart cart = session.getCart();
+                if (cart != null){
+                    cartCount = cart.getProducts().size();
+                }
+            }
+            parameters.put("cartCount", cartCount);
+
             boolean editMode = securityService.checkTokenPermissions(token, EnumSet.of(UserRole.ADMIN));
             parameters.put("editMode", editMode);
 

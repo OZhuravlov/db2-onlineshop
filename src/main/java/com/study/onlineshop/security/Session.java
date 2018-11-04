@@ -1,5 +1,6 @@
 package com.study.onlineshop.security;
 
+import com.study.onlineshop.entity.Cart;
 import com.study.onlineshop.entity.Product;
 import com.study.onlineshop.entity.User;
 
@@ -11,7 +12,7 @@ public class Session {
     private User user;
     private LocalDateTime expireDate;
 
-    private List<Product> cart;
+    private Cart cart;
 
     public LocalDateTime getExpireDate() {
         return expireDate;
@@ -37,11 +38,11 @@ public class Session {
         this.user = user;
     }
 
-    public void addProductToCart(Product product){
-        cart.add(product);
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 
-    public List<Product> getCart() {
+    public Cart getCart() {
         return cart;
     }
 

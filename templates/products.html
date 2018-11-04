@@ -12,7 +12,10 @@
     <title>Products</title>
 </head>
 <body>
-<div><button class="float-right submit-button" onclick="location.href = '/logout';" id="logoutButton" >Logout</button></div>
+<div class="col-md-4 text-center">
+    <button class="float-center submit-button" onclick="location.href = '/cart';" id="cartButton" >Cart (${cartCount})</button>
+    <button class="float-center submit-button" onclick="location.href = '/logout';" id="logoutButton" >Logout</button>
+</div>
 <br>
 <#if editMode>
     <div class="container">
@@ -45,15 +48,15 @@
                 <td>${product.name}</td>
                 <td>${product.creationDate}</td>
                 <td>${product.price}</td>
-                <!--<td>-->
-                    <!--<form action="/product/cart" method="POST">-->
-                        <!--<input type="hidden" name="product_id" value="${product.id}"/>-->
-                        <!--<span class="table-add"><input type="submit" value="Add to cart"/></span>-->
-                    <!--</form>-->
-                <!--</td>-->
+                <td>
+                    <form action="/cart" method="POST">
+                        <input type="hidden" name="product_id" value="${product.id}"/>
+                        <span class="table-add"><input type="submit" value="Add to cart"/></span>
+                    </form>
+                </td>
                 <#if editMode>
                     <td>
-                        <button class="btn btn-default" onclick="window.location.href='/product/edit/${product.id}'"> Edit Product </button>
+                        <button class="table-edit" onclick="window.location.href='/product/edit/${product.id}'"> Edit Product </button>
                     </td>
                     <td>
                         <form action="/product/delete/${product.id}" method="POST">
