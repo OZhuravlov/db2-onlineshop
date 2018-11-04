@@ -13,6 +13,8 @@ import com.study.onlineshop.service.impl.DefaultUserService;
 import com.study.onlineshop.web.filter.AdminRoleSecurityFilter;
 import com.study.onlineshop.web.filter.UserRoleSecurityFilter;
 import com.study.onlineshop.web.servlet.*;
+import com.study.onlineshop.web.templater.PageGenerator;
+import freemarker.template.Configuration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;

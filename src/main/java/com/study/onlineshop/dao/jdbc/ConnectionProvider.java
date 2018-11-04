@@ -12,8 +12,8 @@ public class ConnectionProvider {
     public void init(){
         properties = new Properties();
         try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            properties.load(new FileInputStream(classLoader.getResource("application.properties").getFile()));
+            ClassLoader classLoader = this.getClass().getClassLoader();
+            properties.load(classLoader.getResourceAsStream("application.properties"));
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
