@@ -1,14 +1,13 @@
 package com.study.onlineshop.security;
 
+import com.study.onlineshop.PropertiesService;
+import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.entity.User;
 import com.study.onlineshop.service.UserService;
 
 import javax.servlet.http.Cookie;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class SecurityService {
     private List<Session> sessionList = new ArrayList<>();
@@ -22,7 +21,9 @@ public class SecurityService {
             session.setUser(user);
             session.setToken(UUID.randomUUID().toString());
 
-            session.setExpireDate(LocalDateTime.now().plusHours(5));
+            PropertiesService propertiesService = ServiceLocator.getServiceLocator().getService(PropertiesService.class);
+            Long maxSessionDurationInSeconds = Long.parseLong(propertiesService.getProperty("web.sessionMaxDurationInSeconds"));
+            session.setExpireDate(LocalDateTime.now().plusSeconds(maxSessionDurationInSeconds));
             sessionList.add(session);
             return session;
         }
@@ -42,11 +43,16 @@ public class SecurityService {
     }
 
     public Session getSession(String token) {
-        for (Session session : sessionList) {
-            if (session.getExpireDate().isBefore(LocalDateTime.now())) {
-                sessionList.remove(session);
-            } else if (session.getToken().equals(token)) {
-                return session;
+        Iterator<Session> iterator = sessionList.iterator();
+        while(iterator.hasNext()){
+            Session session = iterator.next();
+            if (session.getToken().equals(token)){
+                if (session.getExpireDate().isBefore(LocalDateTime.now())) {
+                    iterator.remove();
+                    return null;
+                } else  {
+                    return session;
+                }
             }
         }
         return null;

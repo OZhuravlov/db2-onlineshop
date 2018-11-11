@@ -14,10 +14,12 @@ import com.study.onlineshop.service.impl.DefaultProductService;
 import com.study.onlineshop.service.impl.DefaultUserService;
 
 import java.util.HashMap;
+import java.util.Properties;
 
 public class ServiceLocator {
     private HashMap<Class<?>, Object> SERVICES = new HashMap<>();
     private static ServiceLocator serviceLocator;
+    private final static String PROPERTIES_FILENAME = "application.properties";
 
     public static ServiceLocator getServiceLocator() {
         if (serviceLocator == null) {
@@ -27,6 +29,10 @@ public class ServiceLocator {
     }
 
     private ServiceLocator() {
+        //Properties
+        PropertiesService propertiesService = new PropertiesService(PROPERTIES_FILENAME);
+        registerService(PropertiesService.class, propertiesService);
+
         // ConnectionProvider
         ConnectionProvider connectionProvider = new ConnectionProvider();
         registerService(ConnectionProvider.class, connectionProvider);

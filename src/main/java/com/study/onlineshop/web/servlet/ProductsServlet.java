@@ -7,9 +7,11 @@ import com.study.onlineshop.entity.UserRole;
 import com.study.onlineshop.security.SecurityService;
 import com.study.onlineshop.security.Session;
 import com.study.onlineshop.service.ProductService;
+import com.study.onlineshop.web.service.CookieService;
 import com.study.onlineshop.web.templater.PageGenerator;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +33,7 @@ public class ProductsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String token = securityService.getValidatedToken(request.getCookies());
+        String token = CookieService.getTokenFromCookies(request.getCookies());
         int cartCount = 0;
         if (token != null) {
             PageGenerator pageGenerator = PageGenerator.instance();

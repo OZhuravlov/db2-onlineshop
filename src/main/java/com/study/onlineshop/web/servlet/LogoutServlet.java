@@ -27,6 +27,7 @@ public class LogoutServlet extends HttpServlet {
                 if (cookie.getName().equals("user-token")) {
                     securityService.logout(cookie.getValue());
                     cookie.setMaxAge(-1);
+                    request.removeAttribute("session");
                 }
             }
         }

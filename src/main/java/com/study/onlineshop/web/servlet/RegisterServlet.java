@@ -1,5 +1,6 @@
 package com.study.onlineshop.web.servlet;
 
+import com.study.onlineshop.PropertiesService;
 import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.security.SecurityService;
 import com.study.onlineshop.security.Session;
@@ -17,11 +18,14 @@ import java.util.HashMap;
 public class RegisterServlet extends HttpServlet {
     private SecurityService securityService;
     private UserService userService;
+    private int cookieMaxAge;
 
     @Override
     public void init() throws ServletException {
         securityService = ServiceLocator.getServiceLocator().getService(SecurityService.class);
         userService = ServiceLocator.getServiceLocator().getService(UserService.class);
+        PropertiesService propertiesService = ServiceLocator.getServiceLocator().getService(PropertiesService.class);
+        cookieMaxAge = Integer.parseInt(propertiesService.getProperty("web.sessionMaxDurationInSeconds"));
     }
 
     @Override
@@ -44,7 +48,7 @@ public class RegisterServlet extends HttpServlet {
             Session session = securityService.login(login, password);
             if (session != null) {
                 Cookie cookie = new Cookie("user-token", session.getToken());
-                cookie.setMaxAge(60 * 60 * 5);
+                cookie.setMaxAge(cookieMaxAge);
                 response.addCookie(cookie);
                 response.sendRedirect("/");
             } else {

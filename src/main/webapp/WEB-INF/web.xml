@@ -83,11 +83,11 @@
         <filter-name>userRoleSecurityFilter</filter-name>
         <url-pattern>/</url-pattern>
         <url-pattern>/products</url-pattern>
-        <url-pattern>/cart</url-pattern>
+        <url-pattern>/cart/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>adminRoleSecurityFilter</filter-name>
-        <url-pattern>/product</url-pattern>
+        <url-pattern>/product/*</url-pattern>
     </filter-mapping>
 
     <!-- ServiceLocator -->
