@@ -1,5 +1,6 @@
 package com.study.onlineshop.web.servlet;
 
+import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.entity.Cart;
 import com.study.onlineshop.entity.Product;
 import com.study.onlineshop.security.SecurityService;
@@ -20,8 +21,13 @@ public class CartServlet extends HttpServlet {
     private CartService cartService;
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void init() throws ServletException {
+        securityService = ServiceLocator.getServiceLocator().getService(SecurityService.class);
+        cartService = ServiceLocator.getServiceLocator().getService(CartService.class);
+    }
 
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PageGenerator pageGenerator = PageGenerator.instance();
         HashMap<String, Object> parameters = new HashMap<>();
 
@@ -29,26 +35,24 @@ public class CartServlet extends HttpServlet {
         if (token != null) {
             Session session = securityService.getSession(token);
             Cart cart = session.getCart();
-            if(cart != null){
+            if (cart != null) {
                 List<Product> cartProducts = cart.getProducts();
-                if(!cartProducts.isEmpty()) {
+                if (!cartProducts.isEmpty()) {
                     parameters.put("cartProducts", cartProducts);
                 }
             }
         }
-
         String page = pageGenerator.getPage("cart", parameters);
         response.getWriter().write(page);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         String token = securityService.getValidatedToken(request.getCookies());
         if (token != null) {
             Session session = securityService.getSession(token);
             Cart cart = session.getCart();
-            if(cart == null){
+            if (cart == null) {
                 cart = new Cart();
                 session.setCart(cart);
             }
@@ -60,11 +64,4 @@ public class CartServlet extends HttpServlet {
         }
     }
 
-    public void setSecurityService(SecurityService securityService) {
-        this.securityService = securityService;
-    }
-
-    public void setCartService(CartService cartService) {
-        this.cartService = cartService;
-    }
 }

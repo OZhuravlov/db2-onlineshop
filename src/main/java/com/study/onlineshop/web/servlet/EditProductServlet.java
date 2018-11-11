@@ -1,5 +1,6 @@
 package com.study.onlineshop.web.servlet;
 
+import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.entity.Product;
 import com.study.onlineshop.service.ProductService;
 import com.study.onlineshop.web.templater.PageGenerator;
@@ -13,6 +14,11 @@ import java.util.HashMap;
 
 public class EditProductServlet extends HttpServlet {
     private ProductService productService;
+
+    @Override
+    public void init() throws ServletException {
+        productService = ServiceLocator.getServiceLocator().getService(ProductService.class);
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -31,8 +37,8 @@ public class EditProductServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("name");
-        double price = Double.valueOf(request.getParameter("price"));
-        if(name == null || name.isEmpty() || price <= 0d){
+        double price = Double.parseDouble(request.getParameter("price"));
+        if (name == null || name.isEmpty() || price <= 0d) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } else {
             int id = getId(request.getRequestURI());
@@ -41,13 +47,9 @@ public class EditProductServlet extends HttpServlet {
         }
     }
 
-    public void setProductService(ProductService productService) {
-        this.productService = productService;
-    }
-
-    private int getId(String uri){
+    private int getId(String uri) {
         int index = uri.lastIndexOf("/");
-        int id = Integer.valueOf(uri.substring(index+1, uri.length()));
+        int id = Integer.valueOf(uri.substring(index + 1, uri.length()));
         return id;
     }
 

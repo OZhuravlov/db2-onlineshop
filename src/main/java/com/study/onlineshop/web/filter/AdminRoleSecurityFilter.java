@@ -1,5 +1,6 @@
 package com.study.onlineshop.web.filter;
 
+import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.entity.UserRole;
 import com.study.onlineshop.security.SecurityService;
 import com.study.onlineshop.security.Session;
@@ -14,8 +15,9 @@ import java.util.EnumSet;
 public class AdminRoleSecurityFilter implements Filter {
     private SecurityService securityService;
 
-    public AdminRoleSecurityFilter(SecurityService securityService) {
-        this.securityService = securityService;
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        securityService = ServiceLocator.getServiceLocator().getService(SecurityService.class);
     }
 
     @Override
@@ -44,11 +46,6 @@ public class AdminRoleSecurityFilter implements Filter {
 
     @Override
     public void destroy() {
-
-    }
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
 
     }
 

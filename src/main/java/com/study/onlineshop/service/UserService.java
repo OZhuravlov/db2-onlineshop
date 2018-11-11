@@ -6,14 +6,11 @@ import com.study.onlineshop.entity.UserRole;
 import java.util.List;
 
 public interface UserService {
-    List<User> getAll();
 
     User getUser(String login, String password);
 
     void add(String login, String password);
+
     void add(String login, String password, UserRole userRole);
 
-    void delete(String login);
-
-    void update(User user);
 }

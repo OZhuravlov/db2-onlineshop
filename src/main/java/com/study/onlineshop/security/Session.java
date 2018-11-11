@@ -1,11 +1,9 @@
 package com.study.onlineshop.security;
 
 import com.study.onlineshop.entity.Cart;
-import com.study.onlineshop.entity.Product;
 import com.study.onlineshop.entity.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class Session {
     private String token;

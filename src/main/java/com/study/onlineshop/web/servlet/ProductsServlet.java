@@ -1,16 +1,15 @@
 package com.study.onlineshop.web.servlet;
 
+import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.entity.Cart;
 import com.study.onlineshop.entity.Product;
 import com.study.onlineshop.entity.UserRole;
 import com.study.onlineshop.security.SecurityService;
 import com.study.onlineshop.security.Session;
-import com.study.onlineshop.service.CartService;
 import com.study.onlineshop.service.ProductService;
 import com.study.onlineshop.web.templater.PageGenerator;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,20 +23,26 @@ public class ProductsServlet extends HttpServlet {
     private SecurityService securityService;
 
     @Override
+    public void init() throws ServletException {
+        productService = ServiceLocator.getServiceLocator().getService(ProductService.class);
+        securityService = ServiceLocator.getServiceLocator().getService(SecurityService.class);
+    }
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String token = securityService.getValidatedToken(request.getCookies());
         int cartCount = 0;
-        if(token != null) {
+        if (token != null) {
             PageGenerator pageGenerator = PageGenerator.instance();
             List<Product> products = productService.getAll();
 
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("products", products);
             Session session = securityService.getSession(token);
-            if(session != null){
+            if (session != null) {
                 Cart cart = session.getCart();
-                if (cart != null){
+                if (cart != null) {
                     cartCount = cart.getProducts().size();
                 }
             }
@@ -51,14 +56,6 @@ public class ProductsServlet extends HttpServlet {
         } else {
             response.sendRedirect("/login");
         }
-    }
-
-    public void setProductService(ProductService productService) {
-        this.productService = productService;
-    }
-
-    public void setSecurityService(SecurityService securityService) {
-        this.securityService = securityService;
     }
 
 }

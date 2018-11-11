@@ -1,5 +1,6 @@
 package com.study.onlineshop.dao.jdbc;
 
+import com.study.onlineshop.dao.ProductDao;
 import com.study.onlineshop.entity.Product;
 import org.junit.Test;
 
@@ -11,10 +12,9 @@ public class JdbcProductDaoITest {
     @Test
     public void testGetAll() throws Exception {
         ConnectionProvider connectionProvider = new ConnectionProvider();
-        connectionProvider.init();
-        JdbcProductDao jdbcProductDao = new JdbcProductDao();
-        jdbcProductDao.setConnectionProvider(connectionProvider);
-        List<Product> products = jdbcProductDao.getAll();
+        ProductDao productDao = new JdbcProductDao();
+        productDao.setConnectionProvider(connectionProvider);
+        List<Product> products = productDao.getAll();
 
         for (Product product : products) {
             assertNotNull(product.getName());

@@ -1,8 +1,8 @@
 package com.study.onlineshop.dao;
 
+import com.study.onlineshop.dao.jdbc.ConnectionProvider;
 import com.study.onlineshop.entity.Product;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface ProductDao {
@@ -16,5 +16,7 @@ public interface ProductDao {
     void delete(int id);
 
     void update(Product product);
+
+    void setConnectionProvider(ConnectionProvider connectionProvider);
 
 }

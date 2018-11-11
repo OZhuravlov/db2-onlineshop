@@ -1,12 +1,9 @@
 package com.study.onlineshop.web.templater;
 
-import freemarker.cache.ClassTemplateLoader;
-import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -20,7 +17,7 @@ public class PageGenerator {
 
     private final Configuration cfg;
 
-    public static PageGenerator instance(){
+    public static PageGenerator instance() {
         if (pageGenerator == null)
             pageGenerator = new PageGenerator();
         return pageGenerator;

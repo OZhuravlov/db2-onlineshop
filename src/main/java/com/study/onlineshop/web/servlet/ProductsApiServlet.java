@@ -1,6 +1,7 @@
 package com.study.onlineshop.web.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.entity.Product;
 import com.study.onlineshop.service.ProductService;
 
@@ -16,6 +17,11 @@ public class ProductsApiServlet extends HttpServlet {
     private ProductService productService;
 
     @Override
+    public void init() throws ServletException {
+        productService = ServiceLocator.getServiceLocator().getService(ProductService.class);
+    }
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Product> products = productService.getAll();
         // products -> json
@@ -24,7 +30,4 @@ public class ProductsApiServlet extends HttpServlet {
         resp.getWriter().write(json);
     }
 
-    public ProductsApiServlet(ProductService productService) {
-        this.productService = productService;
-    }
 }

@@ -22,31 +22,27 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public List<User> getAll() {
-        return userDao.getAll();
-    }
-
-    @Override
     public User getUser(String login, String password) {
         User user = userDao.getUser(login);
-        if(user == null){
+        if (user == null) {
             return null;
         }
         String encryptedPassword = getEncryptedPassword(password, user.getSole());
-        if(encryptedPassword.equals(user.getEncryptedPassword())){
+        if (encryptedPassword.equals(user.getEncryptedPassword())) {
             return user;
-        }else{
+        } else {
             return null;
         }
     }
 
     @Override
-    public void add(String login, String password){
+    public void add(String login, String password) {
         add(login, password, DEFAULT_USER_ROLE);
     }
+
     @Override
-    public void add(String login, String password, UserRole userRole){
-        if(userDao.getUser(login) != null){
+    public void add(String login, String password, UserRole userRole) {
+        if (userDao.getUser(login) != null) {
             throw new UserExistsException("User " + login + " already exists");
         }
         User user = new User();
@@ -60,32 +56,22 @@ public class DefaultUserService implements UserService {
         user.setId(id);
     }
 
-    @Override
-    public void delete(String login) {
-       userDao.delete(login);
-    }
-
-    @Override
-    public void update(User user) {
-        userDao.update(user);
-    }
-
-    private String nextSole(){
+    private String nextSole() {
         UUID sole = UUID.randomUUID();
         return sole.toString();
     }
-    private String getEncryptedPassword(String password, String salt){
+
+    private String getEncryptedPassword(String password, String salt) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGORITM);
             messageDigest.update(salt.getBytes(StandardCharsets.UTF_8));
             byte[] bytes = messageDigest.digest(password.getBytes(StandardCharsets.UTF_8));
             StringBuilder stringBuilder = new StringBuilder();
-            for(int i=0; i< bytes.length ;i++){
+            for (int i = 0; i < bytes.length; i++) {
                 stringBuilder.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
             }
             return stringBuilder.toString();
-        }
-        catch (NoSuchAlgorithmException e){
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             throw new RuntimeException("Can't encrypt password", e);
         }

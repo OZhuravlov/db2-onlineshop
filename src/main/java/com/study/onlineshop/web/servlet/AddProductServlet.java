@@ -1,5 +1,6 @@
 package com.study.onlineshop.web.servlet;
 
+import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.entity.Product;
 import com.study.onlineshop.service.ProductService;
 
@@ -15,12 +16,17 @@ public class AddProductServlet extends HttpServlet {
     private ProductService productService;
 
     @Override
+    public void init() throws ServletException {
+        productService = ServiceLocator.getServiceLocator().getService(ProductService.class);
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         Cookie[] cookies = request.getCookies();
 
         String name = request.getParameter("name");
-        double price = Double.valueOf(request.getParameter("price"));
+        double price = Double.parseDouble(request.getParameter("price"));
         Product product = new Product();
         product.setName(name);
         product.setPrice(price);
@@ -28,10 +34,6 @@ public class AddProductServlet extends HttpServlet {
         int id = productService.add(product);
         product.setId(id);
         response.sendRedirect("/products");
-    }
-
-    public void setProductService(ProductService productService) {
-        this.productService = productService;
     }
 
 }

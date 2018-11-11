@@ -1,5 +1,6 @@
 package com.study.onlineshop.web.servlet;
 
+import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.service.ProductService;
 
 import javax.servlet.ServletException;
@@ -12,15 +13,17 @@ public class DeleteProductServlet extends HttpServlet {
     private ProductService productService;
 
     @Override
+    public void init() throws ServletException {
+        productService = ServiceLocator.getServiceLocator().getService(ProductService.class);
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uri = req.getRequestURI();
         int index = uri.lastIndexOf("/");
-        int id = Integer.valueOf(uri.substring(index+1, uri.length()));
+        int id = Integer.valueOf(uri.substring(index + 1));
         productService.delete(id);
         resp.sendRedirect("/products");
     }
 
-    public void setProductService(ProductService productService) {
-        this.productService = productService;
-    }
 }

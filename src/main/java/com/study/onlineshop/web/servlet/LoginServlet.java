@@ -1,5 +1,6 @@
 package com.study.onlineshop.web.servlet;
 
+import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.security.SecurityService;
 import com.study.onlineshop.security.Session;
 import com.study.onlineshop.web.templater.PageGenerator;
@@ -15,8 +16,9 @@ import java.util.HashMap;
 public class LoginServlet extends HttpServlet {
     private SecurityService securityService;
 
-    public LoginServlet(SecurityService securityService) {
-        this.securityService = securityService;
+    @Override
+    public void init() throws ServletException {
+        securityService = ServiceLocator.getServiceLocator().getService(SecurityService.class);
     }
 
     @Override
@@ -43,23 +45,5 @@ public class LoginServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
+
 }
-
-// id, login, password, role
-
-// UI -> (login, password) Server -> query DB
-
-// (trubintolik@gmail.com, 12345)
-
-// register -> login + password -> save to db login + sha1(password)
-// login -> login + password -> login + sha1(password) -> query from db
-
-// sole = 'db2_onlineshop'
-// register -> login + password -> save to db login + sha1(password + sole)
-// login -> login + password -> login + sha1(password + sole) -> query from db
-
-
-// sole = random -> UUID.randomUUID().toString()
-// user (id, login, password, sole, userRole)
-// register -> login + password -> save to db login + sha1(password + sole)
-// login -> login + password -> login + sha1(password + sole) -> query from db

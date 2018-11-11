@@ -38,7 +38,7 @@ public class DefaultProductService implements ProductService {
     public void update(int id, String name, double price) {
         Product product = getById(id);
         boolean isModified = !product.getName().equals(name) || product.getPrice() != price;
-        if(isModified) {
+        if (isModified) {
             product.setName(name);
             product.setPrice(price);
             productDao.update(product);

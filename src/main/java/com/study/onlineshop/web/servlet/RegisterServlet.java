@@ -1,5 +1,6 @@
 package com.study.onlineshop.web.servlet;
 
+import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.security.SecurityService;
 import com.study.onlineshop.security.Session;
 import com.study.onlineshop.service.UserService;
@@ -17,8 +18,10 @@ public class RegisterServlet extends HttpServlet {
     private SecurityService securityService;
     private UserService userService;
 
-    public RegisterServlet(SecurityService securityService) {
-        this.securityService = securityService;
+    @Override
+    public void init() throws ServletException {
+        securityService = ServiceLocator.getServiceLocator().getService(SecurityService.class);
+        userService = ServiceLocator.getServiceLocator().getService(UserService.class);
     }
 
     @Override
@@ -36,7 +39,7 @@ public class RegisterServlet extends HttpServlet {
         String password = request.getParameter("password");
         String verifyPassword = request.getParameter("verify_password");
         System.out.println(login + " : " + password + " : " + verifyPassword);
-        if(password != null && !password.isEmpty() && password.equals(verifyPassword)){
+        if (password != null && !password.isEmpty() && password.equals(verifyPassword)) {
             userService.add(login, password);
             Session session = securityService.login(login, password);
             if (session != null) {
@@ -52,7 +55,4 @@ public class RegisterServlet extends HttpServlet {
         }
     }
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
 }

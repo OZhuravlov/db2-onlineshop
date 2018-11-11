@@ -1,6 +1,5 @@
 package com.study.onlineshop.dao.jdbc;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,7 +8,7 @@ import java.util.Properties;
 
 public class ConnectionProvider {
     Properties properties;
-    public void init(){
+    public ConnectionProvider(){
         properties = new Properties();
         try {
             ClassLoader classLoader = this.getClass().getClassLoader();

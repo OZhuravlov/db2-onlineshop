@@ -1,7 +1,6 @@
 package com.study.onlineshop.security;
 
 import com.study.onlineshop.entity.User;
-import com.study.onlineshop.entity.UserRole;
 import com.study.onlineshop.service.UserService;
 
 import javax.servlet.http.Cookie;
