@@ -2,7 +2,6 @@ package com.study.onlineshop;
 
 import com.study.onlineshop.dao.ProductDao;
 import com.study.onlineshop.dao.UserDao;
-import com.study.onlineshop.dao.jdbc.ConnectionProvider;
 import com.study.onlineshop.dao.jdbc.JdbcProductDao;
 import com.study.onlineshop.dao.jdbc.JdbcUserDao;
 import com.study.onlineshop.security.SecurityService;
@@ -29,33 +28,33 @@ public class ServiceLocator {
     }
 
     private ServiceLocator() {
-        //Properties
-        PropertiesService propertiesService = new PropertiesService(PROPERTIES_FILENAME);
-        registerService(PropertiesService.class, propertiesService);
-
-        // ConnectionProvider
-        ConnectionProvider connectionProvider = new ConnectionProvider();
-        registerService(ConnectionProvider.class, connectionProvider);
-
-        // dao config
-        ProductDao productDao = new JdbcProductDao();
-        productDao.setConnectionProvider(connectionProvider);
-        registerService(ProductDao.class, productDao);
-        UserDao userDao = new JdbcUserDao();
-        userDao.setConnectionProvider(connectionProvider);
-        registerService(UserDao.class, productDao);
-
-        // configure services
-        ProductService productService = new DefaultProductService(productDao);
-        registerService(ProductService.class, productService);
-        UserService userService = new DefaultUserService(userDao);
-        registerService(UserService.class, userService);
-        SecurityService securityService = new SecurityService();
-        securityService.setUserService(userService);
-        registerService(SecurityService.class, securityService);
-        CartService cartService = new DefaultCartService();
-        cartService.setProductService(productService);
-        registerService(CartService.class, cartService);
+//        //Properties
+//        PropertiesService propertiesService = new PropertiesService(PROPERTIES_FILENAME);
+//        registerService(PropertiesService.class, propertiesService);
+//
+//        // ConnectionProvider
+//        ConnectionProvider connectionProvider = new ConnectionProvider();
+//        registerService(ConnectionProvider.class, connectionProvider);
+//
+//        // dao config
+//        ProductDao productDao = new JdbcProductDao();
+//        productDao.setConnectionProvider(connectionProvider);
+//        registerService(ProductDao.class, productDao);
+//        UserDao userDao = new JdbcUserDao();
+//        userDao.setConnectionProvider(connectionProvider);
+//        registerService(UserDao.class, productDao);
+//
+//        // configure services
+//        ProductService productService = new DefaultProductService(productDao);
+//        registerService(ProductService.class, productService);
+//        UserService userService = new DefaultUserService(userDao);
+//        registerService(UserService.class, userService);
+//        SecurityService securityService = new SecurityService();
+//        securityService.setUserService(userService);
+//        registerService(SecurityService.class, securityService);
+//        CartService cartService = new DefaultCartService();
+//        cartService.setProductService(productService);
+//        registerService(CartService.class, cartService);
 
     }
 

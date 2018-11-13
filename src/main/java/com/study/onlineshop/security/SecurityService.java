@@ -1,9 +1,9 @@
 package com.study.onlineshop.security;
 
-import com.study.onlineshop.PropertiesService;
-import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.entity.User;
 import com.study.onlineshop.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.Cookie;
 import java.time.LocalDateTime;
@@ -12,6 +12,10 @@ import java.util.*;
 public class SecurityService {
     private List<Session> sessionList = new ArrayList<>();
 
+    @Value("${web.sessionMaxDurationInSeconds}")
+    private Long maxSessionDurationInSeconds;
+
+    @Autowired
     private UserService userService;
 
     public Session login(String login, String password) {
@@ -21,8 +25,6 @@ public class SecurityService {
             session.setUser(user);
             session.setToken(UUID.randomUUID().toString());
 
-            PropertiesService propertiesService = ServiceLocator.getServiceLocator().getService(PropertiesService.class);
-            Long maxSessionDurationInSeconds = Long.parseLong(propertiesService.getProperty("web.sessionMaxDurationInSeconds"));
             session.setExpireDate(LocalDateTime.now().plusSeconds(maxSessionDurationInSeconds));
             sessionList.add(session);
             return session;
@@ -44,13 +46,13 @@ public class SecurityService {
 
     public Session getSession(String token) {
         Iterator<Session> iterator = sessionList.iterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             Session session = iterator.next();
-            if (session.getToken().equals(token)){
+            if (session.getToken().equals(token)) {
                 if (session.getExpireDate().isBefore(LocalDateTime.now())) {
                     iterator.remove();
                     return null;
-                } else  {
+                } else {
                     return session;
                 }
             }

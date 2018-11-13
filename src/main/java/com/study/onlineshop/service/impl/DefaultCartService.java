@@ -5,8 +5,11 @@ import com.study.onlineshop.entity.Product;
 import com.study.onlineshop.exception.NoSuchProduct;
 import com.study.onlineshop.service.CartService;
 import com.study.onlineshop.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DefaultCartService implements CartService {
+
+    @Autowired
     ProductService productService;
 
     @Override

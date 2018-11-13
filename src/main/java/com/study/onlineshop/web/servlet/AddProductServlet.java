@@ -23,8 +23,6 @@ public class AddProductServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        Cookie[] cookies = request.getCookies();
-
         String name = request.getParameter("name");
         double price = Double.parseDouble(request.getParameter("price"));
         Product product = new Product();
