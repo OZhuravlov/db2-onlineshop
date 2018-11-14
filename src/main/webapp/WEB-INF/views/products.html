@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <title>Products</title>
+</head>
+<body>
+<div class="col-md-4 text-center">
+    <button class="float-center submit-button" onclick="location.href = '/cart';" id="cartButton" >Cart (${cartCount})</button>
+    <button class="float-center submit-button" onclick="location.href = '/logout';" id="logoutButton" >Logout</button>
+</div>
+<br>
+<#if editMode>
+    <div class="container">
+        <form action="product/add" method="POST">
+            <div class="form-group">
+                Product name: <input type="text" id="name" name="name">
+                Price: <input type="number" step="0.01" id="price" name="price">
+                <input type="submit" value="Add Product">
+            </div>
+        </form>
+    </div>
+    <br>
+</#if>
+<div class="container">
+    <h1 class="align-center">Product list</h1>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Creation date</th>
+            <th scope="col">Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <#list products as product>
+            <tr>
+                <th scope="row">${product.id}</th>
+                <td>${product.name}</td>
+                <td>${product.creationDate}</td>
+                <td>${product.price}</td>
+                <td>
+                    <form action="/cart" method="POST">
+                        <input type="hidden" name="product_id" value="${product.id}"/>
+                        <span class="table-add"><input type="submit" value="Add to cart"/></span>
+                    </form>
+                </td>
+                <#if editMode>
+                    <td>
+                        <button class="table-edit" onclick="window.location.href='/product/edit/${product.id}'"> Edit Product </button>
+                    </td>
+                    <td>
+                        <form action="/product/delete/${product.id}" method="POST">
+                            <span class="table-remove"><input type="submit" value="Delete Product"/></span>
+                        </form>
+                    </td>
+                </#if>
+            </tr>
+        </#list>
+        </tbody>
+    </table>
+
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+</body>
+</html>
