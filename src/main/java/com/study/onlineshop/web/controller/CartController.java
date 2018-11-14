@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -42,8 +43,7 @@ public class CartController {
     }
 
     @RequestMapping(path = "/cart", method = RequestMethod.POST)
-    @ResponseBody
-    public String addToCart(HttpServletRequest request) throws IOException {
+    public void addToCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Session session = (Session) request.getAttribute("session");
         Cart cart = session.getCart();
         if (cart == null) {
@@ -52,7 +52,7 @@ public class CartController {
         }
         int productId = Integer.parseInt(request.getParameter("product_id"));
         cartService.addToCart(cart, productId);
-        return "redirect:/products";
+        response.sendRedirect("/products");
     }
 
     public void setCartService(CartService cartService) {

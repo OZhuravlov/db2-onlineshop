@@ -102,10 +102,9 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/product/delete/{id}", method = RequestMethod.POST)
-    @ResponseBody
-    public String deleteProduct(HttpServletRequest request, HttpServletResponse response, @PathVariable int id) throws IOException {
+    public void deleteProduct(HttpServletRequest request, HttpServletResponse response, @PathVariable int id) throws IOException {
         productService.delete(id);
-        return "redirect:/products";
+        response.sendRedirect("/products");
     }
 
     public void setProductService(ProductService productService) {

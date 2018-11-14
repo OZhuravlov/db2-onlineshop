@@ -87,8 +87,7 @@ public class SessionController {
     }
 
     @RequestMapping(path = "/logout", method = RequestMethod.GET)
-    @ResponseBody
-    public String logout(HttpServletRequest request) throws IOException {
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : request.getCookies()) {
@@ -99,7 +98,7 @@ public class SessionController {
                 }
             }
         }
-        return ("redirect:/login");
+        response.sendRedirect("/login");
     }
 
     public void setSecurityService(SecurityService securityService) {
