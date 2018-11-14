@@ -23,7 +23,7 @@ public class ProductRowMapperTest {
         when(resultSet.getInt("id")).thenReturn(1);
         when(resultSet.getString(any())).thenReturn("Product name");
         when(resultSet.getDouble("price")).thenReturn(2000.50);
-        when(resultSet.getTimestamp("creationDate")).thenReturn(Timestamp.valueOf(expectedDate));
+        when(resultSet.getTimestamp("creation_date")).thenReturn(Timestamp.valueOf(expectedDate));
 
         // when
         Product actualProduct = productRowMapper.mapRow(resultSet);

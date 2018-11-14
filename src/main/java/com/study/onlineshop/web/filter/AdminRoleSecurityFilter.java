@@ -1,10 +1,10 @@
 package com.study.onlineshop.web.filter;
 
+import com.study.onlineshop.ServiceLocator;
 import com.study.onlineshop.entity.UserRole;
 import com.study.onlineshop.security.SecurityService;
 import com.study.onlineshop.security.Session;
 import com.study.onlineshop.web.service.CookieService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
@@ -13,13 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.EnumSet;
 
-public class UserRoleSecurityFilter implements Filter {
-
-    @Autowired
+public class AdminRoleSecurityFilter implements Filter {
     private SecurityService securityService;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        securityService = ServiceLocator.getServiceLocator().getService(SecurityService.class);
     }
 
     @Override
@@ -30,12 +29,12 @@ public class UserRoleSecurityFilter implements Filter {
         Cookie[] cookies = httpServletRequest.getCookies();
         boolean isAuth = false;
 
-        String token = CookieService.getTokenFromCookies(cookies);
         Session session = null;
+        String token = CookieService.getTokenFromCookies(cookies);
         if (token != null) {
             session = securityService.getSession(token);
             if (session != null) {
-                isAuth = securityService.checkTokenPermissions(token, EnumSet.of(UserRole.USER, UserRole.ADMIN));
+                isAuth = securityService.checkTokenPermissions(token, EnumSet.of(UserRole.ADMIN));
             }
         }
 
