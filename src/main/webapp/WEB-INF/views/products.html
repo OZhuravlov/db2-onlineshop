@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -17,18 +17,17 @@
     <button class="float-center submit-button" onclick="location.href = '/logout';" id="logoutButton" >Logout</button>
 </div>
 <br>
-<#if editMode>
-    <div class="container">
-        <form action="product/add" method="POST">
+    <div th:if="${editMode}" class="container">
+        <form action="#" th:action="@{/product/add}" th:object="${product}" method="POST">
             <div class="form-group">
-                Product name: <input type="text" id="name" name="name">
-                Price: <input type="number" step="0.01" id="price" name="price">
+                Product name: <input type="text" th:field="*{name}">
+                Price: <input type="number" step="0.01" th:field="*{price}">
                 <input type="submit" value="Add Product">
+                <input type="reset" value="Reset" />
             </div>
         </form>
     </div>
     <br>
-</#if>
 <div class="container">
     <h1 class="align-center">Product list</h1>
 
@@ -42,30 +41,27 @@
         </tr>
         </thead>
         <tbody>
-        <#list products as product>
-            <tr>
-                <th scope="row">${product.id}</th>
-                <td>${product.name}</td>
-                <td>${product.creationDate}</td>
-                <td>${product.price}</td>
+            <tr th:each="product : ${products}">
+                <th scope="row" th:text="${product.id}"></th>
+                <td th:text="${product.name}"></td>
+                <td th:text="${product.creationDate}"></td>
+                <td th:text="${product.price}"></td>
                 <td>
-                    <form action="/cart" method="POST">
-                        <input type="hidden" name="product_id" value="${product.id}"/>
+                    <form action="#" th:action="@{/cart}" th:object="${product}" method="POST">
                         <span class="table-add"><input type="submit" value="Add to cart"/></span>
                     </form>
                 </td>
-                <#if editMode>
+                <div th:if="${editMode}">
                     <td>
-                        <button class="table-edit" onclick="window.location.href='/product/edit/${product.id}'"> Edit Product </button>
+                        <button class="table-edit" th:onclick="'window.location.href = \'' + @{/product/edit/{id}(id=${product.id})} + '\''"> Edit Product </button>
                     </td>
                     <td>
-                        <form action="/product/delete/${product.id}" method="POST">
+                        <form th:action="@{/product/delete/{id}(id=${product.id})}" method="POST">
                             <span class="table-remove"><input type="submit" value="Delete Product"/></span>
                         </form>
                     </td>
-                </#if>
+                </div>
             </tr>
-        </#list>
         </tbody>
     </table>
 
