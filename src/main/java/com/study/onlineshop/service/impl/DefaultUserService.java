@@ -20,10 +20,6 @@ public class DefaultUserService implements UserService {
     private static final String HASH_ALGORITM = "SHA-256";
     private static final UserRole DEFAULT_USER_ROLE = UserRole.USER;
 
-    public DefaultUserService(UserDao userDao) {
-        this.userDao = userDao;
-    }
-
     @Override
     public User getUser(String login, String password) {
         User user = userDao.getUser(login);
