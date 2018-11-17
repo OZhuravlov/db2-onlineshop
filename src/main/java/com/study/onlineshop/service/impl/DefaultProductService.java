@@ -4,12 +4,13 @@ import com.study.onlineshop.dao.ProductDao;
 import com.study.onlineshop.entity.Product;
 import com.study.onlineshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class DefaultProductService implements ProductService {
 
-    @Autowired
     private ProductDao productDao;
 
     @Override
@@ -23,9 +24,8 @@ public class DefaultProductService implements ProductService {
     }
 
     @Override
-    public int add(Product product) {
-        int id = productDao.add(product);
-        return id;
+    public void add(Product product) {
+        productDao.add(product);
     }
 
     @Override
@@ -36,11 +36,14 @@ public class DefaultProductService implements ProductService {
     @Override
     public void update(int id, String name, double price) {
         Product product = getById(id);
-        boolean isModified = !product.getName().equals(name) || product.getPrice() != price;
-        if (isModified) {
-            product.setName(name);
-            product.setPrice(price);
-            productDao.update(product);
-        }
+        product.setName(name);
+        product.setPrice(price);
+        productDao.update(product);
     }
+
+    @Autowired
+    public void setProductDao(ProductDao productDao) {
+        this.productDao = productDao;
+    }
+
 }

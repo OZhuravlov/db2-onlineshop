@@ -4,60 +4,47 @@ import com.study.onlineshop.dao.UserDao;
 import com.study.onlineshop.dao.jdbc.mapper.UserRowMapper;
 import com.study.onlineshop.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
+@Repository
 public class JdbcUserDao implements UserDao {
 
     private static final String GET_SQL = "SELECT id, login, user_role, encrypted_password, sole FROM users WHERE login = ?";
     private static final String ADD_SQL = "INSERT INTO users(login, user_role, encrypted_password, sole) VALUES (?, ?, ?, ?);";
     private static final UserRowMapper USER_ROW_MAPPER = new UserRowMapper();
 
-    @Autowired
-    private DataSource dataSource;
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public User getUser(String login) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(GET_SQL)) {
-            statement.setString(1, login);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return USER_ROW_MAPPER.mapRow(resultSet);
-            }
-            return null;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+        return jdbcTemplate.queryForObject(GET_SQL
+                , new Object[]{login}, USER_ROW_MAPPER);
     }
 
     @Override
     public int add(User user) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(ADD_SQL)) {
-            statement.setString(1, user.getLogin());
-            statement.setString(2, user.getUserRole().toString());
-            statement.setString(3, user.getEncryptedPassword());
-            statement.setString(4, user.getSole());
-            statement.executeUpdate();
-            ResultSet resultSet = statement.getGeneratedKeys();
-            int id = 0;
-            if (resultSet.next()) {
-                id = statement.getGeneratedKeys().getInt(1);
-            }
-            return id;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection
+                    .prepareStatement(ADD_SQL);
+            ps.setString(1, user.getLogin());
+            ps.setString(2, user.getUserRole().toString());
+            ps.setString(3, user.getEncryptedPassword());
+            ps.setString(4, user.getSole());
+            return ps;
+        }, keyHolder);
+
+        return (int) keyHolder.getKey();
     }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    @Autowired
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 }

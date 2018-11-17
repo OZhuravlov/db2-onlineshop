@@ -9,8 +9,8 @@ public interface UserService {
 
     User getUser(String login, String password);
 
-    void add(String login, String password);
+    User add(String login, String password);
 
-    void add(String login, String password, UserRole userRole);
+    User add(String login, String password, UserRole userRole);
 
 }

@@ -6,10 +6,11 @@ import com.study.onlineshop.exception.NoSuchProduct;
 import com.study.onlineshop.service.CartService;
 import com.study.onlineshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class DefaultCartService implements CartService {
 
-    @Autowired
     ProductService productService;
 
     @Override
@@ -21,6 +22,7 @@ public class DefaultCartService implements CartService {
         cart.getProducts().add(product);
     }
 
+    @Autowired
     public void setProductService(ProductService productService) {
         this.productService = productService;
     }

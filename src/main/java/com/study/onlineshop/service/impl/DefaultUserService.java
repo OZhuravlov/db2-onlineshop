@@ -6,6 +6,7 @@ import com.study.onlineshop.entity.UserRole;
 import com.study.onlineshop.exception.UserExistsException;
 import com.study.onlineshop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -13,10 +14,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class DefaultUserService implements UserService {
 
-    @Autowired
     private UserDao userDao;
+
     private static final String HASH_ALGORITM = "SHA-256";
     private static final UserRole DEFAULT_USER_ROLE = UserRole.USER;
 
@@ -35,12 +37,12 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public void add(String login, String password) {
-        add(login, password, DEFAULT_USER_ROLE);
+    public User add(String login, String password) {
+        return add(login, password, DEFAULT_USER_ROLE);
     }
 
     @Override
-    public void add(String login, String password, UserRole userRole) {
+    public User add(String login, String password, UserRole userRole) {
         if (userDao.getUser(login) != null) {
             throw new UserExistsException("User " + login + " already exists");
         }
@@ -53,6 +55,7 @@ public class DefaultUserService implements UserService {
         user.setUserRole(userRole);
         int id = userDao.add(user);
         user.setId(id);
+        return user;
     }
 
     private String nextSole() {
@@ -74,5 +77,10 @@ public class DefaultUserService implements UserService {
             e.printStackTrace();
             throw new RuntimeException("Can't encrypt password", e);
         }
+    }
+
+    @Autowired
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 }

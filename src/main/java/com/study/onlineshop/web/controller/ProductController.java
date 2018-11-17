@@ -8,13 +8,8 @@ import com.study.onlineshop.service.ProductService;
 import com.study.onlineshop.web.templater.PageGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -24,30 +19,24 @@ import java.util.List;
 @Controller
 public class ProductController {
 
-    @Autowired
     private ProductService productService;
 
     private PageGenerator pageGenerator = PageGenerator.instance();
 
     @RequestMapping(value = {"/products", "/"}, method = RequestMethod.GET)
     @ResponseBody
-    public String getAll(HttpServletRequest request) throws IOException {
+    public String getAll(@RequestAttribute Session session) throws IOException {
         List<Product> products = productService.getAll();
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("products", products);
-        Session session = (Session) request.getAttribute("session");
         int cartCount = 0;
-        if (session != null) {
-            Cart cart = session.getCart();
-            if (cart != null) {
-                cartCount = cart.getProducts().size();
-            }
+        Cart cart = session.getCart();
+        if (cart != null) {
+            cartCount = cart.getProducts().size();
         }
         parameters.put("cartCount", cartCount);
-
         boolean editMode = session.getUser().getUserRole().equals(UserRole.ADMIN);
         parameters.put("editMode", editMode);
-
         String page = pageGenerator.getPage("products", parameters);
         return page;
     }
@@ -63,16 +52,14 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/product/add", method = RequestMethod.POST)
-    public void addProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String name = request.getParameter("name");
-        double price = Double.parseDouble(request.getParameter("price"));
+    public String addProduct(@RequestParam String name,
+                             @RequestParam double price) {
         Product product = new Product();
         product.setName(name);
         product.setPrice(price);
         product.setCreationDate(LocalDateTime.now());
-        int id = productService.add(product);
-        product.setId(id);
-        response.sendRedirect("/products");
+        productService.add(product);
+        return "redirect:/products";
     }
 
 
@@ -90,23 +77,22 @@ public class ProductController {
 
 
     @RequestMapping(path = "/product/edit/{id}", method = RequestMethod.POST)
-    public void editProduct(HttpServletRequest request, HttpServletResponse response, @PathVariable int id) throws IOException {
-        String name = request.getParameter("name");
-        double price = Double.parseDouble(request.getParameter("price"));
+    public String editProduct(@RequestParam String name, @RequestParam double price, @PathVariable int id) {
         if (name == null || name.isEmpty() || price <= 0d) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return "redirect:/product/" + id;
         } else {
             productService.update(id, name, price);
-            response.sendRedirect("/products");
+            return "redirect:/products";
         }
     }
 
     @RequestMapping(path = "/product/delete/{id}", method = RequestMethod.POST)
-    public void deleteProduct(HttpServletRequest request, HttpServletResponse response, @PathVariable int id) throws IOException {
+    public String deleteProduct(@PathVariable int id) {
         productService.delete(id);
-        response.sendRedirect("/products");
+        return "redirect:/products";
     }
 
+    @Autowired
     public void setProductService(ProductService productService) {
         this.productService = productService;
     }

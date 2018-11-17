@@ -1,8 +1,8 @@
-package com.study.onlineshop.web.service;
+package com.study.onlineshop.web.util;
 
 import javax.servlet.http.Cookie;
 
-public class CookieService {
+public class WebUtil {
 
     public static String getTokenFromCookies(Cookie[] cookies) {
         if (cookies != null) {
@@ -18,5 +18,11 @@ public class CookieService {
             }
         }
         return null;
+    }
+
+    public static Cookie createCookieFromToken(String token, int cookieMaxAge){
+        Cookie cookie = new Cookie("user-token", token);
+        cookie.setMaxAge(cookieMaxAge);
+        return cookie;
     }
 }

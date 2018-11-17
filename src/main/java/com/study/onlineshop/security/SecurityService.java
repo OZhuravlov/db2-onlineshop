@@ -4,19 +4,34 @@ import com.study.onlineshop.entity.User;
 import com.study.onlineshop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Service
 public class SecurityService {
     private List<Session> sessionList = new ArrayList<>();
 
     @Value("${web.sessionMaxDurationInSeconds}")
     private Long maxSessionDurationInSeconds;
 
-    @Autowired
     private UserService userService;
+
+    public Session register(String login, String password) {
+        User user = userService.add(login, password);
+        if (user != null) {
+            Session session = new Session();
+            session.setUser(user);
+            session.setToken(UUID.randomUUID().toString());
+
+            session.setExpireDate(LocalDateTime.now().plusSeconds(maxSessionDurationInSeconds));
+            sessionList.add(session);
+            return session;
+        }
+        return null;
+    }
 
     public Session login(String login, String password) {
         User user = userService.getUser(login, password);
@@ -60,10 +75,6 @@ public class SecurityService {
         return null;
     }
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
     public String getValidatedToken(Cookie[] cookies) {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -86,6 +97,11 @@ public class SecurityService {
     public boolean checkTokenPermissions(String token, EnumSet roles) {
         Session session = getSession(token);
         return session != null && roles.contains(session.getUser().getUserRole());
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
 }
